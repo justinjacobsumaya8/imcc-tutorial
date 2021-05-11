@@ -12,9 +12,9 @@ class BlogController extends Controller
 		$blogs = Blog::leftJoin('tags as t', 't.id', 'blogs.tag_id')
 					->leftJoin('users as u', 'u.id', 'blogs.created_by')
 					->select('blogs.*', 't.name', 'u.name as author_name')
-					->paginate(5);
+					->paginate(3);
 		
-		return view('blog.index', compact('blogs'));
+		return view('blog.old_index', compact('blogs'));
 	}
 
 	public function create()
@@ -25,12 +25,27 @@ class BlogController extends Controller
 
 	public function store(Request $request)
 	{
+		$request->validate([
+		    'title' => 'required',
+		    'content' => 'required',
+		    'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+		]);
+
 		$blog = new Blog;
 		$blog->title = $request->title;
 		$blog->content = $request->content;
 		$blog->tag_id = $request->tag_id;
-		$blog->created_at = auth()->user() ? auth()->user()->id : 1;
+		$blog->created_by = auth()->user() ? auth()->user()->id : 1;
 		$blog->save();
+
+		if ($request->file('image')) 
+		{
+			$fileName = time().'_'.$request->image->getClientOriginalName();
+            $filePath = $request->file('image')->storeAs('uploads', $fileName, 'public');
+
+            $blog->image = time().'_'.$request->image->getClientOriginalName();
+            $blog->save();
+		}
 
 		return redirect('blog')->with('success', 'Blog added successfully');
 	}

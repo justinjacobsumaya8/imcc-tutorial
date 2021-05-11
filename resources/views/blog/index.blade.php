@@ -10,18 +10,7 @@
 </head>
 <body>
 	<div class="container">
-		@if(session()->get('success'))
-		<div class="row mt-5">
-			<div class="col-md-12">
-				<div class="alert alert-success">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					    <span aria-hidden="true">&times;</span>
-					</button>
-					{!! session()->get('success') !!}
-				</div>
-			</div>
-		</div>
-		@endif
+		
 		<div class="row mt-2">
 			<div class="col-md-12 mb-3 mt-3">
 				<div class="d-flex align-items-center">
